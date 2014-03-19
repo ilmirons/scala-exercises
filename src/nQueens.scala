@@ -2,15 +2,15 @@ import scala.collection.immutable.Nil
 
 object nQueens extends App {
 
-	val N = 8
+	val N = args(0) toInt
 	
 	type Position = (Int, Int)
 	type Board = List[Position]
 	
-	val board = for {
-		i <- 0 to N
-		j <- 0 to N
-	} yield (i, j)
+	val board = (for {
+		i <- 0 until N 
+		j <- 0 until N
+	} yield (i, j)) toList
 	
 	def updateAvailable (pos: Position, board: Board) = {
 	  board.filter( _ match {
@@ -20,20 +20,22 @@ object nQueens extends App {
 	        i - j == pos._1 - pos._2)
 	  })
 	}
-	// TODO: define a infix or operator for Board that 
-	// return second argument if 1st is Nil.
-	// use call by name to skip computation
-	// do we have to extend type?
-	def ||(that: Board) = {
-	  
-	}
-
-	def solve(available: Board, queens: Int, pos: Position, solution: Board): Board = {
+	
+	def solve(available: Board, queens: Int,
+	    solution: Option[Board] = Some(Nil)): Option[Board] = {
 	  
 	  if (queens == 0) solution else
-	  if (available.length == 0) Nil else 
-	  solve(updateAvailable(pos, available), queens - 1, pos, pos :: solution) ||
-	  solve(available, queens, available.tail.head, solution)
+	  if (available.length == 0) None else {
+		  solve(updateAvailable(available.head, available), 
+		        queens - 1, 
+		        solution.map((sol) => available.head :: sol)) match {
+		    case Some(board) => Some(board)
+		    case None => solve(available.tail, queens, solution)
+		  }
+	  }
 	}
-
+	
+	print(solve(board, N))
 }
+
+
