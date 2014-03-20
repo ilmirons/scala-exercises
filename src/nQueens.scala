@@ -13,7 +13,9 @@ trait nQueen {
   
   def updateSolution(sol: Solution)(p: Position): Solution
   
-  def printSolution(s: Solution) = print _
+  def printSolution(s: Solution) {
+    print(s)
+  } 
   
   def solve[T <: Seq[Position]](available: T, queens: Int,
 	    sol: Option[Solution]): Option[Solution] = {
