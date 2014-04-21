@@ -3,28 +3,27 @@ import scala.collection.immutable.Nil
 trait nQueen {
   
   type Position
-  // TODO make different implementation of Board possible
-  type Board <: Seq[Position]
-  type Solution
+  type Board    <: Seq[Position]
+  type Solution =  Option[Board]
   
   def mkBoard(n: Int): Board
   
   def updateAvailablePositions[T <: Seq[Position]](pos: Position, board: T): Seq[Position]
   
-  def updateSolution(sol: Solution)(p: Position): Solution
+  def updateSolution(sol: Solution, p: Position): Solution
   
-  def printSolution(s: Solution) {
-    print(s)
+  def printSolution(b: Board) {
+    print(b)
   } 
   
   def solve[T <: Seq[Position]](available: T, queens: Int,
-	    sol: Option[Solution]): Option[Solution] = {
+	    sol: Solution): Solution = {
 	  
 	  if (queens == 0) sol else
 	  if (available.length == 0) None else {
 		  solve(updateAvailablePositions(available.head, available), 
 		        queens - 1, 
-		        sol.map(updateSolution(_)(available.head))) match {
+		        updateSolution(sol, available.head)) match {
 		    case Some(solution) => Some(solution)
 		    case None => solve(available.tail, queens, sol)
 		  }
@@ -38,7 +37,6 @@ object nQueens extends App with nQueen {
 	
 	type Position = (Int, Int)
 	type Board    = List[Position]
-	type Solution = Board
 	
 	val board = mkBoard(N)
 	
@@ -58,8 +56,8 @@ object nQueens extends App with nQueen {
 	  })
 	}
 	
-	def updateSolution(sol: Solution)(p: Position): Solution = {
-	  p :: sol
+	def updateSolution(sol: Solution, p: Position): Solution = {
+	  sol.map(board => p :: board)
 	}
 	
 	solve(board, N, Some(Nil)) match {
