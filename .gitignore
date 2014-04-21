@@ -1,8 +1,9 @@
 bin
+target
 
 # eclipse / scala stuff
 
 .cache
 .classpath
 .project
-.settings/org.eclipse.jdt.core.prefs
+.settings
